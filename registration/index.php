@@ -48,8 +48,11 @@ includeTemplate('header.php', ['href' => '/authorization/', 'hrefName' => 'Уж�
     <form class="form" method="POST">
         <h2 class="title">Регистрация</h2>
         <input name="email" placeholder="Почта" value="<?=htmlspecialchars($_POST['email'] ?? '')?>"></input>
+        <span class="error"><?=$showMessage ? htmlspecialchars($message) : '&nbsp;'?></span>
         <input name="login" placeholder="Логин" value="<?=htmlspecialchars($_POST['login'] ?? '')?>"></input>
+        <span class="error"><?=$showMessage ? htmlspecialchars($message) : '&nbsp;'?></span>
         <input name="password" type="password" placeholder="Пароль" value="<?=htmlspecialchars($_POST['password'] ?? '')?>"></input>
+        <span class="error"><?=$showMessage ? htmlspecialchars($message) : '&nbsp;'?></span>
         <input name="password" type="confirm_password" placeholder="Подтвердите пароль" value="<?=htmlspecialchars($_POST['confirm_password'] ?? '')?>"></input>
         <span class="error"><?=$showMessage ? htmlspecialchars($message) : '&nbsp;'?></span>
         <div class="nav-form nav-form-registration">
