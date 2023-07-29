@@ -168,7 +168,7 @@ footer {
     background-color: #FFFFFF;
     border-radius: 20px;
     padding: 50px 200px;
-    gap: 10px;
+    gap: 15px;
 }
 
 .title {
@@ -178,13 +178,44 @@ footer {
     margin-bottom: 20px;
 }
 
+.input-wrapper {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 5px;
+}
+
 .form-input {
+    width: 100%;
     background-color: #F3F4F6;
     border: 0;
     border-radius: 15px;
     color: #636363;
     padding: 15px 20px;
     font-size: 18px;
+}
+
+.form-input-password {
+    padding-right: 50px;
+}
+
+.password-field {
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+.img-visibility {
+    position: absolute;
+    top: 25%;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+}
+
+.img-visibility img {
+    width: 100%;
+    object-fit: contain;
 }
 
 .form-input::placeholder {
@@ -204,10 +235,6 @@ footer {
 
 .global-error {
     text-align: center;
-}
-
-.form-input-password {
-    padding-right: 50px;
 }
 
 .nav-form {
@@ -237,3 +264,7 @@ footer {
     color: #7a63be;
 }
 
+.checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+}

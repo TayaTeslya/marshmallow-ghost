@@ -14,8 +14,14 @@ function login(array $user): void
         'username' => $user['first_name'] . ' ' . $user['last_name'],
     ];
     $_SESSION['user'] = $userSession;
-    setcookie('email', $user['email'], [
-        'expires' => time() + 3600 * 24 * 30,
+    setCookieEmail($user['email']);
+}
+
+function setCookieEmail(string $email, int $time = 3600 * 24 * 30): void 
+{
+    setcookie('email', $email, [
+        'expires' => time() + $time, // после регистрации email в куках хранится 10 минут, после авторизации - 30 дней
+        'path' => '/',
     ]);
 }
 
@@ -28,6 +34,7 @@ function rewriteCookie(string $userEmail = ''): void
 {
     setcookie('email', $userEmail, [
         'expires' => time() + 3600 * 24 * 30,
+        'path' => '/',
     ]);
 }
 
