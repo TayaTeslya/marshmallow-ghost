@@ -46,4 +46,3 @@ function registration(array $user): int
     $query->execute([$user['login'], $user['login'], $user['email'], $user['password'], $user['login']]);
     return (int) $connection->lastInsertId();
 }
-

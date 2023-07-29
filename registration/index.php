@@ -1,8 +1,9 @@
 <?php
-
-use function PHPSTORM_META\map;
-
 include_once dirname(__DIR__) . '/src/core.php';
+
+if (isAuthorized()) {
+    header('Location: /');
+}
 
 function formatChars(int $count): string // формат вывода слова "символ"
 {
@@ -36,7 +37,7 @@ function formatChars(int $count): string // формат вывода слова
 //     return;
 // }
 
-function validation(string $key, int $minCount = 0, int $maxCount = 0): string // проверка валидации формы
+function validation(string $key, int $minCount = 0, int $maxCount = 0, string $lockChars = '', string $requiredChars = ''): string // проверка валидации формы
 {
     global $showError;
     $showError = false;
@@ -55,6 +56,23 @@ function validation(string $key, int $minCount = 0, int $maxCount = 0): string /
     } elseif ($key === 'login' && findUserLogin(strtolower($_POST['login']))) {
         $message = 'Этот логин уже занят';
         $showError = true;
+    } else {
+        if ($requiredChars !== '') {
+            echo 'requiredchars';
+            preg_match('/' . $requiredChars . '/', $_POST[$key], $matchesRequired, PREG_OFFSET_CAPTURE);
+            if (!$matchesRequired[0][0]) {
+                $message = 'Поле должно содержать хотя бы 1 спец-символ "' . implode(' ', str_split($requiredChars)) . '"';
+                $showError = true;
+            }
+        }
+        if ($lockChars !== '') {
+            echo 'lockchars';
+            preg_match('/' . $lockChars . '/', $_POST[$key], $matchesLock, PREG_OFFSET_CAPTURE);
+            if ($matchesLock[0][0]) {
+                $message = 'Символ ' . $matchesLock[0][0] . ' запрещен';
+                $showError = true;
+            }
+        }   
     }
     // регулярки
     return $message ?? '';
@@ -63,23 +81,22 @@ function validation(string $key, int $minCount = 0, int $maxCount = 0): string /
 $fields = [ // данные для проверки и вывода ошибки для каждого поля
     'email' => [
         'message' => '',
-        'minCount' => 0,
-        'maxCount' => 0,
     ],
     'login' => [
         'message' => '',
         'minCount' => 4,
         'maxCount' => 30,
+        'lockChars' => '[!@#$%^&*()+\-=\[\]{};\':"\\|,.<>\/?]', // запретить русские символы
     ],
     'password' => [
         'message' => '',
         'minCount' => 6,
         'maxCount' => 40,
+        'lockChars' => '[&()+=\[\]{};\':"\\|<>\/?]',
+        'requiredChars' => '[!@#$%^*_,.\-]',
     ],
     'confirm-password' => [
         'message' => '',
-        'minCount' => 0,
-        'maxCount' => 0,
     ],
 ];
 $showError = false;
@@ -90,12 +107,12 @@ if (isset($_POST['sendForm'])) { // проверка отправки формы
     $showMessage = false;
     $messageGlobal = '';
     foreach ($fields as $key => $field) { // проверка валидации каждого поля
-        $fields[$key]['message'] = validation($key, $field['minCount'], $field['maxCount']);
+        $fields[$key]['message'] = validation($key, $field['minCount'] ?? 0, $field['maxCount'] ?? 0, $field['lockChars'] ?? '', $field['requiredChars'] ?? '');
     }
     if (!$showError) {
         if ($_POST['password'] === $_POST['confirm-password']) {
             if (registration(['login' => strtolower($_POST['login']), 'email' => strtolower($_POST['email']), 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT)]) !== 0) {
-                setCookieEmail($_POST['email'], 60 * 10);
+                setCookieEmail($_POST['email'], 60 * 10); // после регистрации email в куках хранится 10 минут, после авторизации - 30 дней
                 header('Location: /authorization/');
             }
         } else {

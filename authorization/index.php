@@ -1,6 +1,10 @@
 <?php
 include_once dirname(__DIR__) . '/src/core.php'; 
 
+if (isAuthorized()) {
+    header('Location: /');
+}
+
 function validation(string $key): string { // проверка валидации формы
     global $showError;
     $showError = false;
@@ -28,6 +32,9 @@ if (isset($_POST['sendForm'])) { // проверка отправки формы
         $user = findUser($_POST['login']); // поиск пользователя в базе данных
         if (!empty($user) && password_verify($_POST['password'], $user['password'])) { // проверка соответствия пароля
             login($user); // авторизация
+            if (isset($_POST['remember-user']) && !empty($_POST['remember-user'])) {
+                setCookieEmail($user['email']);
+            }
             header('Location: /');
         } else {
             $messageGlobal = 'Неправильный логин и/или пароль';
@@ -56,10 +63,12 @@ includeTemplate('header.php', ['href' => '/registration/', 'hrefName' => 'Нет
             </div>
             <span class="error"><?=htmlspecialchars($messages['password']) ?? '&nbsp;'?></span>
         </div>
-        
+        <div class="checkbox-wrapper">
+            <input class="checkbox" id="remember-user" type="checkbox" name="remember-user" value="yes">
+            <label for="remember-user">Запомнить меня</label>
+        </div>
         <span class="error global-error"><?=$showMessage ? htmlspecialchars($messageGlobal) : '&nbsp;'?></span>
         <div class="nav-form">
-            
             <a href="">Забыли пароль?</a>
             <button name="sendForm" class="button">Войти</button>
         </div>

@@ -1,5 +1,9 @@
 <?php
 include_once ('src/core.php');
+if (!isAuthorized()) {
+    header('Location: /authorization/');
+}
+
 echo 'главная страница';
 ?>
 <!DOCTYPE html>

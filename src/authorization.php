@@ -9,12 +9,10 @@ function login(array $user): void
 {
     $_SESSION['auth'] = true;
     $userSession = [
-        'email' => $user['email'],
         'id' => $user['id'],
         'username' => $user['first_name'] . ' ' . $user['last_name'],
     ];
     $_SESSION['user'] = $userSession;
-    setCookieEmail($user['email']);
 }
 
 function setCookieEmail(string $email, int $time = 3600 * 24 * 30): void 
@@ -28,14 +26,6 @@ function setCookieEmail(string $email, int $time = 3600 * 24 * 30): void
 function currentUser(): array
 {
     return $_SESSION['user'] ?? [];
-}
-
-function rewriteCookie(string $userEmail = ''): void
-{
-    setcookie('email', $userEmail, [
-        'expires' => time() + 3600 * 24 * 30,
-        'path' => '/',
-    ]);
 }
 
 function logout()
